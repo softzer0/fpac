@@ -211,7 +211,7 @@ describe("EconomicDataFetcher", () => {
             function: "WTI", // Alpha Vantage uses WTI function for commodities
             apikey: "test-alpha-key",
           }),
-          timeout: 10000
+          timeout: 10000,
         })
       );
     });
@@ -256,7 +256,7 @@ describe("EconomicDataFetcher", () => {
             date: expect.any(String),
             per_page: 1,
           },
-          timeout: 10000
+          timeout: 10000,
         })
       );
     });

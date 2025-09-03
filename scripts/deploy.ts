@@ -1,6 +1,5 @@
-import { ethers } from "hardhat";
-import { Contract, ContractFactory } from "ethers";
 import fs from "fs";
+import { ethers } from "hardhat";
 import path from "path";
 
 interface DeploymentAddresses {
@@ -17,13 +16,13 @@ interface DeploymentAddresses {
 
 async function main() {
   console.log("🚀 Starting FPAC deployment...");
-  
+
   const [deployer] = await ethers.getSigners();
   console.log("📋 Deploying contracts with account:", deployer.address);
-  
+
   const balance = await ethers.provider.getBalance(deployer.address);
   console.log("💰 Account balance:", ethers.formatEther(balance), "ETH");
-  
+
   if (balance === 0n) {
     throw new Error("❌ Deployer account has no ETH for gas fees");
   }
@@ -31,14 +30,14 @@ async function main() {
   // Deployment configuration
   const INITIAL_FAIT_PRICE = ethers.parseUnits("1.0", 18); // $1.00 in wei
   const network = await ethers.provider.getNetwork();
-  
+
   console.log(`🌐 Deploying to network: ${network.name} (${network.chainId})`);
 
   // Deploy contracts in order
   const addresses: Partial<DeploymentAddresses> = {
     deployer: deployer.address,
     network: network.name,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
 
   try {
@@ -65,13 +64,7 @@ async function main() {
     // 3. Deploy PegEngine
     console.log("\n⚙️ Deploying PegEngine...");
     const PegEngine = await ethers.getContractFactory("PegEngine");
-    const pegEngine = await PegEngine.deploy(
-      deployer.address,
-      deployer.address,
-      addresses.FPAC,
-      addresses.OracleHub,
-      INITIAL_FAIT_PRICE
-    );
+    const pegEngine = await PegEngine.deploy(deployer.address, deployer.address, addresses.FPAC, addresses.OracleHub, INITIAL_FAIT_PRICE);
     await pegEngine.waitForDeployment();
     addresses.PegEngine = await pegEngine.getAddress();
     console.log("✅ PegEngine deployed to:", addresses.PegEngine);
@@ -79,10 +72,7 @@ async function main() {
     // 4. Deploy ReserveManager
     console.log("\n🏦 Deploying ReserveManager...");
     const ReserveManager = await ethers.getContractFactory("ReserveManager");
-    const reserveManager = await ReserveManager.deploy(
-      deployer.address,
-      deployer.address
-    );
+    const reserveManager = await ReserveManager.deploy(deployer.address, deployer.address);
     await reserveManager.waitForDeployment();
     addresses.ReserveManager = await reserveManager.getAddress();
     console.log("✅ ReserveManager deployed to:", addresses.ReserveManager);
@@ -90,10 +80,7 @@ async function main() {
     // 5. Deploy GovernanceToken
     console.log("\n🗳️ Deploying GovernanceToken...");
     const GovernanceToken = await ethers.getContractFactory("GovernanceToken");
-    const governanceToken = await GovernanceToken.deploy(
-      deployer.address,
-      deployer.address
-    );
+    const governanceToken = await GovernanceToken.deploy(deployer.address, deployer.address);
     await governanceToken.waitForDeployment();
     addresses.GovernanceToken = await governanceToken.getAddress();
     console.log("✅ GovernanceToken deployed to:", addresses.GovernanceToken);
@@ -101,10 +88,7 @@ async function main() {
     // 6. Deploy Treasury
     console.log("\n🏛️ Deploying Treasury...");
     const Treasury = await ethers.getContractFactory("Treasury");
-    const treasury = await Treasury.deploy(
-      deployer.address,
-      deployer.address
-    );
+    const treasury = await Treasury.deploy(deployer.address, deployer.address);
     await treasury.waitForDeployment();
     addresses.Treasury = await treasury.getAddress();
     console.log("✅ Treasury deployed to:", addresses.Treasury);
@@ -117,7 +101,7 @@ async function main() {
     const MINTER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("MINTER_ROLE"));
     const BURNER_ROLE = ethers.keccak256(ethers.toUtf8Bytes("BURNER_ROLE"));
     const PEG_ENGINE_ROLE = ethers.keccak256(ethers.toUtf8Bytes("PEG_ENGINE_ROLE"));
-    
+
     await fpac.grantRole(MINTER_ROLE, addresses.PegEngine);
     await fpac.grantRole(BURNER_ROLE, addresses.PegEngine);
     await fpac.grantRole(PEG_ENGINE_ROLE, addresses.PegEngine);
@@ -143,7 +127,7 @@ async function main() {
 
     const deploymentFile = path.join(deploymentsDir, `${network.name}-${Date.now()}.json`);
     fs.writeFileSync(deploymentFile, JSON.stringify(addresses, null, 2));
-    
+
     // Also save as latest
     const latestFile = path.join(deploymentsDir, `${network.name}-latest.json`);
     fs.writeFileSync(latestFile, JSON.stringify(addresses, null, 2));
@@ -156,14 +140,14 @@ async function main() {
       network: {
         rpcUrl: network.name === "sepolia" ? "https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID" : "http://localhost:8545",
         chainId: Number(network.chainId),
-        oracleHubAddress: addresses.OracleHub
+        oracleHubAddress: addresses.OracleHub,
       },
       contracts: addresses,
       deployment: {
         timestamp: addresses.timestamp,
         deployer: addresses.deployer,
-        network: network.name
-      }
+        network: network.name,
+      },
     };
 
     const oracleConfigFile = path.join(__dirname, "..", "oracle-agent", "config.json");
@@ -194,10 +178,13 @@ async function main() {
     if (network.name !== "hardhat" && network.name !== "localhost") {
       console.log("\n🔍 Verify contracts on Etherscan:");
       console.log(`npx hardhat verify --network ${network.name} ${addresses.OracleHub} "${deployer.address}" "${deployer.address}"`);
-      console.log(`npx hardhat verify --network ${network.name} ${addresses.FPAC} "${deployer.address}" "${deployer.address}" "${INITIAL_FAIT_PRICE}"`);
-      console.log(`npx hardhat verify --network ${network.name} ${addresses.PegEngine} "${deployer.address}" "${deployer.address}" "${addresses.FPAC}" "${addresses.OracleHub}" "${INITIAL_FAIT_PRICE}"`);
+      console.log(
+        `npx hardhat verify --network ${network.name} ${addresses.FPAC} "${deployer.address}" "${deployer.address}" "${INITIAL_FAIT_PRICE}"`
+      );
+      console.log(
+        `npx hardhat verify --network ${network.name} ${addresses.PegEngine} "${deployer.address}" "${deployer.address}" "${addresses.FPAC}" "${addresses.OracleHub}" "${INITIAL_FAIT_PRICE}"`
+      );
     }
-
   } catch (error) {
     console.error("❌ Deployment failed:", error);
     process.exit(1);

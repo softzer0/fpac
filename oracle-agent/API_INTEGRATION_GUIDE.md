@@ -5,13 +5,15 @@ This guide explains how to set up and use the real API integrations in the FPAC 
 ## 📊 Integrated APIs
 
 ### 1. Bureau of Labor Statistics (BLS) - CPI Data ✅
+
 - **Purpose**: Real-time Consumer Price Index data
 - **Cost**: Free (25 requests/day for v1.0)
 - **Setup**: No API key required for basic usage
 - **Upgrade**: Register at [BLS Registration](https://data.bls.gov/registrationEngine/) for 500 requests/day
 - **Smart Caching**: Reduces usage to ~1-2 calls per month based on release schedule
 
-### 2. CoinGecko - Cryptocurrency Prices ✅  
+### 2. CoinGecko - Cryptocurrency Prices ✅
+
 - **Purpose**: FAIT token price data
 - **Cost**: Free (10,000 calls/month)
 - **Setup**: No API key required
@@ -19,6 +21,7 @@ This guide explains how to set up and use the real API integrations in the FPAC 
 - **Documentation**: [CoinGecko API Docs](https://www.coingecko.com/en/api/documentation)
 
 ### 3. ExchangeRate-API - Foreign Exchange Rates ✅
+
 - **Purpose**: Real-time forex rates for multiple currencies
 - **Cost**: Free (1,500 requests/month via open access)
 - **Setup**: No API key required for basic usage
@@ -26,12 +29,14 @@ This guide explains how to set up and use the real API integrations in the FPAC 
 - **Documentation**: [ExchangeRate-API Docs](https://www.exchangerate-api.com/docs/free)
 
 ### 4. Alpha Vantage - Commodity Data ✅
+
 - **Purpose**: Oil prices and commodity indices for basket pricing
 - **Cost**: Free (25 requests/day)
 - **Setup**: Register for API key at [Alpha Vantage](https://www.alphavantage.co/support/#api-key)
 - **Environment Variable**: `ALPHA_VANTAGE_API_KEY`
 
 ### 5. World Bank API - Inflation Data ✅
+
 - **Purpose**: Global inflation rates
 - **Cost**: Free, no limits
 - **Setup**: No API key required
@@ -41,12 +46,14 @@ This guide explains how to set up and use the real API integrations in the FPAC 
 ## 🚀 Quick Setup
 
 ### 1. Install Dependencies
+
 ```bash
 cd oracle-agent
 npm install
 ```
 
 ### 2. Set up Environment Variables
+
 ```bash
 # Copy the example environment file
 cp .env.example .env
@@ -55,6 +62,7 @@ cp .env.example .env
 ```
 
 ### 3. Required API Keys (Optional)
+
 Most services work without API keys, but for production use:
 
 ```bash
@@ -66,6 +74,7 @@ FRED_API_KEY=your_key_here
 ```
 
 ### 4. Test the APIs
+
 ```bash
 # Run the oracle agent
 npm start
@@ -77,25 +86,28 @@ npm start
 
 ## 📈 API Rate Limits & Costs
 
-| API | Free Tier | Paid Options | Our Usage |
-|-----|-----------|--------------|-----------|
-| BLS | 25/day | 500/day ($0) | ~1-2/month |
-| CoinGecko | 10,000/month | Various plans | ~1,440/month |
-| ExchangeRate-API | 1,500/month | $10/month | ~1,440/month |
-| Alpha Vantage | 25/day | $50/month | ~1/day |
-| World Bank | Unlimited | Free | ~30/month |
+| API              | Free Tier    | Paid Options  | Our Usage    |
+| ---------------- | ------------ | ------------- | ------------ |
+| BLS              | 25/day       | 500/day ($0)  | ~1-2/month   |
+| CoinGecko        | 10,000/month | Various plans | ~1,440/month |
+| ExchangeRate-API | 1,500/month  | $10/month     | ~1,440/month |
+| Alpha Vantage    | 25/day       | $50/month     | ~1/day       |
+| World Bank       | Unlimited    | Free          | ~30/month    |
 
 **Total Monthly Cost**: $0 (all free tiers sufficient for our usage)
 
 ## 🔧 Configuration Options
 
 ### Cache Settings
+
 - **CPI Data**: Cached based on release periods, smart invalidation
 - **Exchange Rates**: Daily updates sufficient (rates don't change hourly)
 - **Commodity Data**: Used for basket pricing variation, updated daily
 
 ### Error Handling
+
 All APIs include:
+
 - Timeout protection (10 seconds)
 - Graceful fallback to mock data
 - Detailed error logging
@@ -111,6 +123,7 @@ All APIs include:
 ## 🛠️ API Integration Details
 
 ### CPI Data Integration
+
 ```typescript
 // Smart caching with period detection
 const cpiData = await fetcher.fetchCPIData();
@@ -120,7 +133,8 @@ const cpiData = await fetcher.fetchCPIData();
 const freshData = await fetcher.refreshCPIData();
 ```
 
-### FAIT Price Integration  
+### FAIT Price Integration
+
 ```typescript
 // Real price from CoinGecko or fallback
 const faitPrice = await fetcher.fetchFAITPrice();
@@ -128,6 +142,7 @@ const faitPrice = await fetcher.fetchFAITPrice();
 ```
 
 ### Exchange Rates Integration
+
 ```typescript
 // Multiple currencies in one call
 const rates = await fetcher.fetchExchangeRates();
@@ -137,6 +152,7 @@ const rates = await fetcher.fetchExchangeRates();
 ## 🔍 Monitoring & Debugging
 
 ### Check API Status
+
 ```typescript
 // Get cache information
 const cacheInfo = fetcher.getCacheInfo();
@@ -144,6 +160,7 @@ console.log(`CPI data age: ${cacheInfo.ageInHours} hours`);
 ```
 
 ### Enable Debug Logging
+
 ```bash
 # In .env file
 DEBUG=true
@@ -153,7 +170,9 @@ npm start
 ```
 
 ### API Health Dashboard
+
 Monitor API status and response times:
+
 - BLS API: [Status Page](https://www.bls.gov/developers/api_signature_v2.htm)
 - CoinGecko: [Status Page](https://status.coingecko.com/)
 - ExchangeRate-API: [Status Page](http://stats.pingdom.com/qv69spvrz94m)
@@ -163,12 +182,14 @@ Monitor API status and response times:
 ### Common Issues
 
 1. **BLS Rate Limit Exceeded**
+
    ```
    Error: BLS API rate limit exceeded (25/day for v1.0)
    Solution: Register for v2.0 API key for 500/day limit
    ```
 
 2. **FAIT Token Not Found**
+
    ```
    Warning: FAIT token not found on CoinGecko, using mock data
    Solution: Update token ID once FAIT is listed on CoinGecko
@@ -181,6 +202,7 @@ Monitor API status and response times:
    ```
 
 ### API Key Setup Issues
+
 ```bash
 # Verify API keys are loaded
 echo $ALPHA_VANTAGE_API_KEY

@@ -16,6 +16,7 @@ This project implements a blockchain-based currency system pegged to the Federal
 ## Project Components
 
 ### Smart Contracts
+
 - **FPAC Token**: Main ERC-20 token pegged to FAIT
 - **PegEngine**: Core logic for maintaining the peg through mint/burn operations
 - **OracleHub**: Manages real-time economic data feeds
@@ -24,16 +25,19 @@ This project implements a blockchain-based currency system pegged to the Federal
 - **Treasury**: Manages protocol funds and operations
 
 ### Oracle System
+
 - Real-time CPI data integration
 - Basket of goods price tracking
 - Automated data validation and consensus
 
 ### Deployment Infrastructure
+
 - Comprehensive deployment scripts
 - Testnet and mainnet configurations
 - Verification and setup automation
 
 ## Technology Stack
+
 - **Solidity 0.8.20**: Smart contract development
 - **Hardhat**: Ethereum development environment
 - **OpenZeppelin**: Security-focused contract libraries

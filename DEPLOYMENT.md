@@ -5,6 +5,7 @@ Complete step-by-step guide to deploy and operate the FPAC currency system.
 ## 📋 Pre-Deployment Checklist
 
 ### System Requirements
+
 - [ ] Node.js 18+ installed
 - [ ] Git installed
 - [ ] MetaMask or compatible wallet
@@ -12,12 +13,14 @@ Complete step-by-step guide to deploy and operate the FPAC currency system.
 - [ ] API keys for data sources
 
 ### Account Setup
+
 - [ ] Deployment account with sufficient ETH
 - [ ] Separate oracle account for data submission
 - [ ] Multi-sig wallet for admin operations (recommended)
 - [ ] Backup and secure all private keys
 
 ### API Keys Required
+
 - [ ] Infura/Alchemy RPC endpoints
 - [ ] Etherscan API key for verification
 - [ ] Economic data API keys (BLS, FRED, etc.)
@@ -26,6 +29,7 @@ Complete step-by-step guide to deploy and operate the FPAC currency system.
 ## 🔧 Step 1: Environment Setup
 
 ### Clone and Install
+
 ```bash
 git clone https://github.com/your-org/fpac-currency-system.git
 cd fpac-currency-system
@@ -33,11 +37,13 @@ npm install
 ```
 
 ### Configure Environment
+
 ```bash
 cp .env.example .env
 ```
 
 Edit `.env` with your configuration:
+
 ```env
 # Network RPC URLs
 SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID
@@ -60,6 +66,7 @@ REPORT_GAS=true
 ```
 
 ### Verify Setup
+
 ```bash
 # Compile contracts
 npm run build
@@ -74,12 +81,14 @@ npx hardhat run scripts/check-balance.ts --network sepolia
 ## 🚀 Step 2: Testnet Deployment
 
 ### Deploy to Sepolia
+
 ```bash
 # Deploy all contracts
 npm run deploy:sepolia
 ```
 
 The deployment script will:
+
 1. Deploy all smart contracts in correct order
 2. Configure roles and permissions
 3. Initialize with safe parameters
@@ -88,6 +97,7 @@ The deployment script will:
 6. Output contract addresses
 
 ### Verify Deployment
+
 ```bash
 # Verify contracts on Etherscan
 npm run verify
@@ -97,6 +107,7 @@ npx hardhat run scripts/interact.ts --network sepolia
 ```
 
 ### Expected Output
+
 ```
 🎉 Deployment completed successfully!
 📋 Contract Addresses:
@@ -115,6 +126,7 @@ npx hardhat run scripts/interact.ts --network sepolia
 ## 🔮 Step 3: Oracle Agent Setup
 
 ### Configure Oracle Agent
+
 ```bash
 cd oracle-agent
 npm install
@@ -122,6 +134,7 @@ cp .env.example .env
 ```
 
 Edit `oracle-agent/.env`:
+
 ```env
 RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID
 CHAIN_ID=11155111
@@ -140,6 +153,7 @@ MAX_RETRIES=3
 ```
 
 ### Start Oracle Agent
+
 ```bash
 # Build and start oracle agent
 npm run build
@@ -147,6 +161,7 @@ npm start
 ```
 
 Expected output:
+
 ```
 🤖 Oracle Agent started successfully
 📊 Fetching CPI data...
@@ -160,6 +175,7 @@ Expected output:
 ## 🧪 Step 4: System Testing
 
 ### Test Peg Maintenance
+
 ```bash
 # Check current peg status
 npx hardhat run scripts/check-peg-status.ts --network sepolia
@@ -169,6 +185,7 @@ npx hardhat run scripts/test-peg-maintenance.ts --network sepolia
 ```
 
 ### Test Oracle Operations
+
 ```bash
 # Check oracle data
 npx hardhat run scripts/check-oracle-data.ts --network sepolia
@@ -178,6 +195,7 @@ npx hardhat run scripts/test-oracle-submission.ts --network sepolia
 ```
 
 ### Test Emergency Functions
+
 ```bash
 # Test pause/unpause (admin only)
 npx hardhat run scripts/test-emergency.ts --network sepolia
@@ -186,26 +204,29 @@ npx hardhat run scripts/test-emergency.ts --network sepolia
 ## 🏦 Step 5: Reserve Management
 
 ### Add Reserve Assets
+
 ```bash
 # Example: Add USDC as reserve asset
 npx hardhat run scripts/add-reserve-asset.ts --network sepolia
 ```
 
 Example script content:
+
 ```typescript
 async function addUSDCReserve() {
   const reserveManager = await ethers.getContractAt("ReserveManager", RESERVE_MANAGER_ADDRESS);
-  
+
   const USDC_ADDRESS = "0xA0b86a33E6441218B99e6E3e0a23B4C4F8E5E2E7"; // Sepolia USDC
   const weight = 5000; // 50%
   const minReserveRatio = 15000; // 150%
-  
+
   await reserveManager.addAsset(USDC_ADDRESS, weight, minReserveRatio);
   console.log("✅ USDC added as reserve asset");
 }
 ```
 
 ### Fund Reserves
+
 ```bash
 # Deposit initial reserves
 npx hardhat run scripts/fund-reserves.ts --network sepolia
@@ -214,6 +235,7 @@ npx hardhat run scripts/fund-reserves.ts --network sepolia
 ## 📊 Step 6: Monitoring Setup
 
 ### Set Up Monitoring
+
 ```bash
 # Install monitoring dependencies
 npm install --save-dev @openzeppelin/defender-client
@@ -223,6 +245,7 @@ npx hardhat run scripts/setup-monitoring.ts --network sepolia
 ```
 
 ### Key Metrics to Monitor
+
 - Peg deviation from target price
 - Oracle data freshness and confidence
 - Reserve collateralization ratio
@@ -230,6 +253,7 @@ npx hardhat run scripts/setup-monitoring.ts --network sepolia
 - Gas usage and costs
 
 ### Recommended Alerts
+
 - Peg deviation > 1%
 - Oracle data older than 2 hours
 - Reserve ratio < 120%
@@ -239,6 +263,7 @@ npx hardhat run scripts/setup-monitoring.ts --network sepolia
 ## 🔒 Step 7: Security Hardening
 
 ### Multi-Signature Setup
+
 ```bash
 # Deploy Gnosis Safe for admin operations
 npx hardhat run scripts/setup-multisig.ts --network sepolia
@@ -248,6 +273,7 @@ npx hardhat run scripts/transfer-admin.ts --network sepolia
 ```
 
 ### Role Management
+
 ```bash
 # Review and minimize role assignments
 npx hardhat run scripts/audit-roles.ts --network sepolia
@@ -259,6 +285,7 @@ npx hardhat run scripts/setup-role-monitoring.ts --network sepolia
 ## 🌐 Step 8: Mainnet Preparation
 
 ### Pre-Mainnet Checklist
+
 - [ ] Complete security audit
 - [ ] Comprehensive testing on testnet
 - [ ] Oracle data sources verified and stable
@@ -268,6 +295,7 @@ npx hardhat run scripts/setup-role-monitoring.ts --network sepolia
 - [ ] Team training completed
 
 ### Mainnet Deployment
+
 ```bash
 # Deploy to mainnet (use with extreme caution)
 npm run deploy:mainnet
@@ -280,6 +308,7 @@ npm run oracle:production
 ```
 
 ### Post-Mainnet Steps
+
 1. **Monitor closely** for first 24-48 hours
 2. **Verify oracle operations** are working correctly
 3. **Test peg maintenance** with small amounts
@@ -289,18 +318,21 @@ npm run oracle:production
 ## 🚨 Emergency Procedures
 
 ### Emergency Pause
+
 ```bash
 # Pause all operations if critical issue detected
 npx hardhat run scripts/emergency-pause.ts --network sepolia
 ```
 
 ### Oracle Override
+
 ```bash
 # Manual oracle data submission if automated system fails
 npx hardhat run scripts/manual-oracle.ts --network sepolia
 ```
 
 ### Reserve Emergency Withdrawal
+
 ```bash
 # Emergency reserve withdrawal (admin only)
 npx hardhat run scripts/emergency-withdraw.ts --network sepolia
@@ -309,18 +341,21 @@ npx hardhat run scripts/emergency-withdraw.ts --network sepolia
 ## 📋 Maintenance Schedule
 
 ### Daily Tasks
+
 - [ ] Monitor peg deviation
 - [ ] Check oracle health
 - [ ] Review operation logs
 - [ ] Verify reserve ratios
 
 ### Weekly Tasks
+
 - [ ] Update oracle data sources if needed
 - [ ] Review governance proposals
 - [ ] Analyze system performance metrics
 - [ ] Check for security updates
 
 ### Monthly Tasks
+
 - [ ] Comprehensive system health review
 - [ ] Update documentation
 - [ ] Review and update emergency procedures
@@ -329,12 +364,14 @@ npx hardhat run scripts/emergency-withdraw.ts --network sepolia
 ## 📞 Support and Resources
 
 ### Getting Help
+
 - **Documentation**: Full technical documentation
 - **Discord**: Community support and discussions
 - **GitHub Issues**: Bug reports and feature requests
 - **Email**: Technical support for critical issues
 
 ### Useful Commands
+
 ```bash
 # Check system status
 npm run status
@@ -352,6 +389,7 @@ npm run oracle:update
 ## ✅ Deployment Verification
 
 After successful deployment, verify:
+
 - [ ] All contracts deployed and verified on Etherscan
 - [ ] Oracle agent running and submitting data
 - [ ] Peg maintenance functioning correctly
@@ -363,4 +401,4 @@ After successful deployment, verify:
 
 ---
 
-*For additional support or questions, please refer to the documentation or contact the development team.*
+_For additional support or questions, please refer to the documentation or contact the development team._

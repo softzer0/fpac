@@ -1,14 +1,14 @@
 // Test setup file
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
 // Load test environment variables
-dotenv.config({ path: '.env.test' });
+dotenv.config({ path: ".env.test" });
 
 // Set longer timeout for API integration tests
 jest.setTimeout(30000);
 
 // Mock axios by default to prevent external API calls during tests
-jest.mock('axios');
+jest.mock("axios");
 
 // Test helper types
 interface TestHelpers {
@@ -23,28 +23,32 @@ const testHelpers: TestHelpers = {
   createMockResponse: (data: any, status = 200) => ({
     data,
     status,
-    statusText: 'OK',
+    statusText: "OK",
     headers: {},
-    config: {}
+    config: {},
   }),
 
   // Helper to create mock BLS API response
   createMockBLSResponse: (value: string, year: string, period: string) => ({
-    status: 'REQUEST_SUCCEEDED',
+    status: "REQUEST_SUCCEEDED",
     Results: {
-      series: [{
-        data: [{
-          value,
-          year,
-          period,
-          latest: 'true'
-        }]
-      }]
-    }
+      series: [
+        {
+          data: [
+            {
+              value,
+              year,
+              period,
+              latest: "true",
+            },
+          ],
+        },
+      ],
+    },
   }),
 
   // Helper to sleep in tests
-  sleep: (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+  sleep: (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)),
 };
 
 // Make helpers globally available

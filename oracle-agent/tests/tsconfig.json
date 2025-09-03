@@ -5,7 +5,5 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "**/*"
-  ]
+  "include": ["**/*"]
 }
